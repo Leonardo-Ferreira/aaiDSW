@@ -5,12 +5,53 @@
 </head>
 <body>
     <p>
-        <h2>Atividade Auto Instrucional</h2>
-        <h2>Leonardo Augusto Lima Ferreira</h2>
+        <h2>Atividade Auto Instrucional - Leonardo Augusto Lima Ferreira</h2>
         <h1>Web-Sockets: Um exemplo simples</h1>
     </p>
     <p>
-        Codigo fonte disponivel em: 
+        Notas:<br />
+        Codigo fonte disponivel em: https://github.com/Leonardo-Ferreira/aaiDSW <br/>
+        Testado nos browsers: IE 11 e Chrome 31 <br/>
+        A Fumec bloqueia o protocolo "WS", talvez nao funcione nos laboratorios/sala-professores/etc...
+    </p>
+    <p>
+        <b>Como a coisa toda funciona:</b><br />
+        <ol>
+            <li>Quando voce <a href="main.html">clicar aqui</a> voce vai ver um quadrado em uma tela branca.</li>
+            <li>Basta clicar nele e arrastar.</li>
+        </ol><br />
+        <b>Agora fazendo tudo ficar interessante:</b>
+        <ol>
+            <li>Abra um novo navegador (ou uma nova aba)</li>
+            <li>Coloque as abas lado-a-lado, de modo que voce possa ver as duas</li>
+            <li>Em qualquer um, clique e arraste o quadrado.</li>
+            <li>Fique Maravilhado!</li>
+        </ol>
+        <br /><b>PS:</b>Se ele estiver se movendo sozinho nao se assuste! O quadrado e compartilhado!
+    </p>
+    <p>
+        <h2>Como a coisa toda funciona por tras dos panos:</h2>
+        Esse exemplo foi desenvolvido utilizando os frameworks ".Net 4.5" e o "SignalR" e esta sendo hospedado no Windows Azure, no modelo Free-WebSites.<br/>
+        Basicamente falando o que acontece e o seguinte:
+        <ul>
+            <li>
+                Quando voce abriu a pagina do bloco um javascript rodou e utilizando o HTTP, abriu um socket utilizando o protocolo "WS".<br/>
+                Uma vez que o seu browser e o servidor levantaram a conexao "WS" o HTTP sai de cena. O TCP continua operando por debaixo dos panos porem.
+            </li>
+            <li>
+                Quando a conexao foi estabelecida, se voce for o primeiro cliente, o servidor vai abrir uma lista "static" e "singleton" onde ele ira armazenar todas as sessoes.
+                Se voce nao for o primeiro, ele vai simplesmente adicionar a sua sessao a essa lista. Detalhe: Cada "aba" de um browser abre uma nova sessao!
+            </li>
+            <li>
+                Quando qualquer das sessoes alterar a posicao do quabrado, atraves de um javascript, o browser envia para o servidor um json com a nova posicao utilizando nao o HTTP mas sim a conexao do web-socket que e duplex.
+            </li>
+            <li>
+                O servidor recebe essa atualizacao e pro-ativamente, atraves da conexao que ele mantem com cada cliente, ele manda que um javascript pre-definido ("updateShape") seja executado com os parametros que ele vai fornecer.
+            </li>
+            <li>
+                O browser entao executa o javascript, e fim! o quadrado moveu!
+            </li>
+        </ul>
     </p>
 </body>
 </html>
