@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Atividade Auto Instrucional Leonardo Augusto Lima Ferreira</title>
+    <style>
+        #shape {
+            width: 100px;
+            height: 100px;
+            background-color: #FF0000;
+        }
+    </style>
+
+</head>
+<body>
+<script src="Scripts/jquery-1.6.4.js"></script>
+<script src="Scripts/jquery-ui-1.10.2.js"></script>
+<script src="Scripts/jquery.signalR-1.0.1.js"></script>
+<script src="/signalr/hubs"></script>
+<script>
+    $(function () {
+        var moveShapeHub = $.connection.moveShapeHub,
+            $shape = $("#shape"),
+            // Ajusta o maximo de mensagens para 10/sec... 
+            // (mouse dispara centenas de eventos que causam panico geral no servidor)
+            messageFrequency = 10,
+            // Diminuir o update rate para melhor performance...
+            updateRate = 1000 / messageFrequency,
+            shapeModel = {
+                left: 0,
+                top: 0
+            },
+            moved = false;
+
+        moveShapeHub.client.updateShape = function (model) {
+            shapeModel = model;
+            // Mover lentamente o quadrado ate a nova localizacao (interpolate)            
+            // O updateInterval e usado como a duracao porque no momento que            
+            // recebermos a proxima localizaca queremos estar na "ultima" localizacao...            
+            // Tbm limpo a "animation queue" para evitar lag (foi foda ter essa ideia)
+            $shape.animate(shapeModel, { duration: updateRate, queue: false });
+        };
+
+        $.connection.hub.start().done(function () {
+            $shape.draggable({
+                drag: function () {
+                    shapeModel = $shape.offset();
+                    moved = true;
+                }
+            });
+
+            setInterval(updateServerModel, updateRate);
+        });
+
+        function updateServerModel() {
+            // So joga pro servidor se for "eu" quem mexi o quadrado
+            if (moved) {
+                moveShapeHub.server.updateModel(shapeModel);
+                moved = false;
+            }
+        }
+    });
+</script>
+<div id="shape" />
+</body>
+</html>
